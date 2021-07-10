@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="./bill_generation.js"></script>
+    <link rel="stylesheet" href="./assets/css/bills.css">
+    <meta charset="UTF-8">
+    <title>Bill Generation</title>
+</head>
+<body>
+<p> generate bills</p>
+
+<div class="form-container" id="form-container-main">
+
+    <div id="bill-product">
+        <form id='bill' method="post">
+            <label for="product_name">Name:</label><br>
+            <input type="text" name="name" id="product_name" list="product_list" autocomplete="off" required>
+            <datalist id="product_list">
+                <select id="product_list_select">
+
+                </select>
+            </datalist><br/>
+            <label for="cost">Cost:</label><br>
+            <input type="number" id="cost" name="cost"  min="1" required><br>
+            <label for="cost">Quantity:</label><br>
+            <input type="number" id="count" name="count"  min="1" max="5" required><br><br>
+            <input type="submit" value="Add to stack">
+
+        </form>
+
+        <div class ="stack-container">
+            <span>
+                    <p>
+                    <img class = "stack-img" alt="stack" src="./assets/icon/stack.png">
+                    <sup id="stack-count">0</sup>
+                    </p>
+
+            </span>
+            <span>
+                <button onclick="proccedBill()"><img src="./assets/icon/tick.png" width="10px" height="10px"></button>
+                <button onclick="discardBill()"><img src="./assets/icon/close.png" width="10px" height="10px"></button>
+            </span>
+        </div>
+
+
+    </div>
+    <div id="customer-dis">
+            <form id="coustomer" method="post"><label for="name">Customer:</label><br>
+                <input type="text" id="name" name="name" required><br>
+                <label for="address">Address:</label><br>
+                <textarea name="address" id="address" form="coustomer">Enter text here...</textarea>
+                <input type="submit" value="Procced">
+            </form>
+    </div>
+
+</div>
+</body>
+</html>
