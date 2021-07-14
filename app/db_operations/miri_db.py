@@ -32,6 +32,19 @@ def _update_db(data):
         dispose(conn)
         return False
 
+def get_bill_info():
+    con = connect_sqlite()
+    try:
+        result = {}
+        cur = con.cursor()
+        cur.execute(f"SELECT COUNT(*) from bills")  # execute a simple SQL select query
+        return cur.fetchone()[0]
+    except Exception as e:
+        con.rollback()
+        return 'F_'
+    finally:
+        dispose(con)
+
 
 def insert_bills(bill_ref):
     conn = connect_sqlite()
@@ -85,7 +98,10 @@ def insert_products():
         payload = request.json
         data = payload.get('upsert_data')
         cur = conn.cursor()
+
         print(data)
+        if not bool(data) or not all([x.strip() for x in data.values()]):
+            return jsonify({'status':'failed'}),403
 
         if payload['type'] == "ventors":
             cur.execute("INSERT INTO ventors (name,ventor_id,ventor_desc,gst_number) VALUES (?,?,?,?)",
@@ -124,7 +140,7 @@ def bill_generation():
 
     try:
         data = request.json
-        html = set_header(123)
+        html = set_header(str(get_bill_info()))
         html = set_user_data(html, data['user_data'])
         html = table_render(html, data['oders'])
         file_name = f"pdf_store/miRi_bill_{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.pdf"
@@ -163,3 +179,20 @@ def product_search():
     finally:
         dispose(con)
 
+
+@miri_module.route('/fetch_counts',methods=['GET'])
+def fetch_count():
+    con = connect_sqlite()
+    try:
+        result = {}
+        cur = con.cursor()
+        for table in ['ventors','products', 'bills']:
+            cur.execute(f"SELECT COUNT(*) from {table}")  # execute a simple SQL select query
+            result[table] = cur.fetchone()[0]
+        return jsonify({'message': "success",'result':result}), 200
+    except Exception as e:
+        print(e)
+        con.rollback()
+        return jsonify({'status': 'failed'}), 403
+    finally:
+        dispose(con)

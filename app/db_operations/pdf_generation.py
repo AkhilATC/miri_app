@@ -1,4 +1,5 @@
 from datetime import datetime
+from xhtml2pdf import pisa
 
 
 def set_header(invoiceNumber):
@@ -67,8 +68,6 @@ def table_render(html_,data):
 
 # Utility function
 def convert_html_to_pdf(source_html, output_filename):
-    print("----dedede-----")
-    from xhtml2pdf import pisa
     # open output file for writing (truncated binary)
     result_file = open(output_filename, "w+b")
 

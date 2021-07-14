@@ -4,6 +4,9 @@ const remote = require('electron').remote
 var $ = jQuery = require('../node_modules/jquery/dist/jquery.min.js');
 const axios = require('axios');
 const { dialog } = require('electron');
+const ipc = require('electron').ipcRenderer;
+
+
 
 let stack = []
 
@@ -67,8 +70,20 @@ function discardBill(){
     w.close()
 }
 function DispFunction(html_){
+
     console.log(html_)
     document.getElementById('form-container-main').innerHTML = html_
+    try{
+
+        const updateBtn = document.getElementById('download-btn')
+        updateBtn.addEventListener('click', function () {
+          ipc.send('update-notify-value', "fetch-info");
+        })
+
+
+    }catch(err){
+        console.log("error in dispFunction ------")
+    }
 
     };
 function billGeneration(payload){
@@ -76,7 +91,8 @@ function billGeneration(payload){
         axios.defaults.headers.post['Content-Type'] = 'application/json';
         axios.post('http://localhost:7001/miri/bill_generation', payload)
           .then((response) => {
-            DispFunction("I'm miRi 👧,Your mini-billing management assistant.I had generated a bill with refferance id "+response.data.bill_ref+". You can click <a target = '_blank' href="+"'"+"../../"+response.data.file_link+"'"+">here</a> to download.")
+
+            DispFunction("I'm miRi 👧,Your mini-billing management assistant.I had generated a bill with refferance id "+response.data.bill_ref+". You can click <a id = 'download-btn' target = '_blank' href="+"'"+"../../"+response.data.file_link+"'"+">here</a> to download.")
           })
           .catch((error) => {
           console.error(error);

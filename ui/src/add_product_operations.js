@@ -3,6 +3,7 @@ const electron = require('electron')
 const remote = require('electron').remote
 var $ = jQuery = require('../node_modules/jquery/dist/jquery.min.js');
 const axios = require('axios');
+const ipc = require('electron').ipcRenderer;
 
 
 $(function() {
@@ -19,11 +20,15 @@ $(function() {
         'type':"products",
         'upsert_data':inputs
         })
+        ipc.send('update-notify-value', "fetch-info");
         // clear 
 //        let w = remote.getCurrentWindow()
 //        w.close()
     });
 });
+function displayFunction(msg){
+    document.getElementById('MiRi').innerHTML = msg;
+}
 
 function sendProducts(payload){
     console.log("send products",payload)
@@ -32,15 +37,17 @@ function sendProducts(payload){
       .then((response) => {
         // Here you can handle the API response
         // Maybe you want to add to your HTML via JavaScript?
+        displayFunction("Product insert successfully 🎉 🎁 🎈")
         $('#product')[0].reset();
         return response
 
       })
       .catch((error) => {
-        let w = remote.getCurrentWindow()
-        w.close()
+        displayFunction("Product insertion failed. 💣 check your inputs..")
         console.error(error);
       });
+
+
 
 //
 
